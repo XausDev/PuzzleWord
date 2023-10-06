@@ -21,7 +21,6 @@ public class TableroLetras {
      * @param palabra objeto de la clase Palabra introducido por el usuario
      */
     public void addPalabra(Palabra palabra){
-
         palabras.add(palabra);
         palabra.calculoIndex();
     }
@@ -37,7 +36,7 @@ public class TableroLetras {
         // Lógica para colocar aleatoriamente las palabras en el tablero
         // evitando superposiciones
         //Primero generamos un tablero con letras aleatorias
-        tablero = new char[10][10];
+       // tablero = new char[10][10];
 
         for (int i = 0; i < palabras.size(); i++) {
             String palabraChar = String.valueOf(palabras.get(i));
@@ -95,8 +94,16 @@ public class TableroLetras {
         // Buscar palabra en tablero
         // Si encontrada, marcarla como descubierta
         // y aumentar contador palabrasEncontradas
+        boolean encontrado = false;
 
-        return false; // palabra no encontrada
+        for (Palabra p: palabras) {
+            if(p.toString().equalsIgnoreCase(palabra)) { //Utilizamos toString para pasar el objeto Palabra del ArrayList a String y poder compararlo
+                encontrado = true;// palabra encontrada
+                palabrasEncontradas++;
+                break;
+            }
+        }
+        return encontrado;
     }
 
     public boolean finJuego() {

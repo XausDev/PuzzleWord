@@ -65,7 +65,5 @@ public class Palabra extends PuzzelItem {
     @Override
     public String toString(){
         return palabra;
-
     }
-
 }
