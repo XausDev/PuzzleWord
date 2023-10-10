@@ -64,7 +64,6 @@ public abstract class PuzzelItem {
     }
 
     public void setDiscovered() {
-
         this.discovered = true;
     }
 

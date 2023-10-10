@@ -1,14 +1,38 @@
 package com.company.model;
 
+import java.lang.management.PlatformLoggingMXBean;
 import java.util.Random;
 
 public class Palabra extends PuzzelItem {
     private String palabra;
+    private char[] letras;
 
-    public Palabra ( int indexRowInit, int indexRowEnd, int indexColumnInit, int indexColumneEnd, String palabra){
-        super(indexRowInit, indexRowEnd,indexColumnInit,indexColumneEnd);
+    public Palabra(int indexRowInit, int indexRowEnd, int indexColumnInit, int indexColumneEnd, String palabra) {
+        super(indexRowInit, indexRowEnd, indexColumnInit, indexColumneEnd);
         this.palabra = palabra;
+        this.letras = new char[palabra.length()];
+
+        for(int i = 0; i < palabra.length(); i++){
+            this.letras[i]= palabra.charAt(i);
+        }
     }
+
+    public char[] getLetras() {
+            return letras;
+    }
+
+    public void setLetras(char[] letras) {
+        this.letras = letras;
+    }
+
+    public void letrasColor(String color){
+        String letraColor = "";
+        for(char letra : letras){
+            letraColor += color + letra;
+        }
+        setLetras(letraColor.toCharArray());
+    }
+
 
     /**
      * Metodo para calcular de forma aleatoria los indices de la palabra.
@@ -31,6 +55,7 @@ public class Palabra extends PuzzelItem {
         }
 
         int numeroAleatorio = random.nextInt(2); //Aleatoriedad de Horizonal y Vertical
+
         if (numeroAleatorio==0){ //Horizontal, i = siempre igual, la misma fila
             int indiceVertical = random.nextInt(10);
             setIndexRowInit(indiceVertical);
@@ -47,21 +72,43 @@ public class Palabra extends PuzzelItem {
         }
     }
 
-
     @Override
     public int length() {
         return palabra.length();
     }
 
     @Override
-    public int[] coordsOfMatch(Object o) {
-        return new int[0];
+    public int[] coordsOfMatch(Object letra) {
+        int row = -1;
+        int col = -1;
+
+        if (getIndexRowInit() == getIndexRowEnd()) { //Horizontal, Row i ==
+            for(int j = 0; j < palabra.length(); j++){
+                if(this.palabra.charAt(j) == (char)letra){
+                    row = getIndexRowInit();
+                    col = j+getIndexColumnInit();
+                }
+            }
+
+        } else if (getIndexColumnInit() == getIndexColumnEnd()) { //Vertical, Colum j ==
+            for(int i = 0; i < palabra.length(); i++){
+                if(this.palabra.charAt(i) == (char)letra){
+                    row = i + getIndexRowInit();
+                    col = getIndexColumnInit();
+                }
+            }
+
+        }return new int[]{row,col};
     }
 
     @Override
     public boolean tryGuess(Object itemToGuess) {
+        if (itemToGuess instanceof String palabraBuscar) {
+            return palabraBuscar.equalsIgnoreCase(palabra);
+        }
         return false;
     }
+
     @Override
     public String toString(){
         return palabra;

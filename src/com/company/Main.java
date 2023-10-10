@@ -1,6 +1,7 @@
 package com.company;
 
 import com.company.model.Palabra;
+import com.company.model.PuzzelItem;
 import com.company.model.TableroLetras;
 
 import java.util.Scanner;
@@ -15,37 +16,47 @@ public class Main {
         Main programa = new Main();
         programa.inicio();
     }
+
     public void inicio(){//Inicio Programa--------------------------
 
+        System.out.println("Ingrese palabras:");
         pedirPalabra();
         System.out.println("--- Registro completado ---");
 
-        tableroLetras.generarTablero();
         System.out.println("Encuentra las palabras en la sopa de letras:\n");
 
+        tableroLetras.generarTablero();
         tableroLetras.imprimirTablero();
-        System.out.println();//Salto de linea
-        do {
+        System.out.println("Introduce una palabra:");
+
+        do {//CREO QUE ESTO PUEDE SER UN METODO EN LA CLASE JUEGO
 
             Scanner input = new Scanner(System.in);
             String palabraBuscar = input.nextLine();
-            if(!tableroLetras.buscarPalabra(palabraBuscar)){
-                System.out.print("La palabra ");
-                System.out.print(ANSI_RED);
-                System.out.print(palabraBuscar.toUpperCase());
-                System.out.print(ANSI_RESET);
-                System.out.println(" no está en la sopa de letras.");
-                System.out.println("Vuelve a intentarlo:\n");
-            }else {
-                System.out.print("¡Has encontrado la palabra ");
-                System.out.print(ANSI_GREEN);
-                System.out.print(palabraBuscar.toUpperCase());
-                System.out.print(ANSI_RESET);
-                System.out.println(" en la sopa de letras!\n");
+
+            boolean encontrada = false;
+
+            for(Palabra palabra: tableroLetras.getPalabras()){ //Por cada palabra del ArrayList se compara con los objetos Palabra
+                if(palabra.tryGuess(palabraBuscar)){ //Para cada objeto palabra entra en el metodo tryGuess y comprueba si existe como objeto Palabra
+                    tableroLetras.sumarPalabra(palabra); //Suma la palabra siempre que discovered = 0
+                    palabra.setDiscovered(); //Discovered pasa a valer 1
+                    System.out.print("¡Has encontrado la palabra "
+                            +ANSI_GREEN+palabraBuscar.toUpperCase()+ANSI_RESET
+                            +" en la sopa de letras!\n");
+                    tableroLetras.imprimirTableroColor(palabra);//En este punto ya sabes que esta palabra ha sido encontrada, discovered = true.
+                    System.out.println();//Salto de linea
+                    encontrada =true;
+                    break;
+                }
             }
 
-            tableroLetras.imprimirTablero();
-            System.out.println();//Salto de linea
+            if(!encontrada){
+                System.out.print("La palabra "
+                        +ANSI_RED+palabraBuscar.toUpperCase()+ANSI_RESET
+                        +" no está en la sopa de letras.");
+                System.out.println("Vuelve a intentarlo:\n");
+            }
+
         }while(!tableroLetras.finJuego());
 
         System.out.println("¡Felicidades! ¡Has completado la sopa de letras!");
@@ -57,16 +68,18 @@ public class Main {
         Scanner input = new Scanner(System.in);
         String palabraUsur;
         boolean salir = false;
-        System.out.println("Ingrese palabras:");
+
         do {
             palabraUsur = input.nextLine();
             String palabraUsurMayus = palabraUsur.toUpperCase(); //Lo pasamos a mayusculas
             if(!palabraUsur.equals("end")) {
                 if (palabraUsur.length() > 10) {
-                    System.out.println("Máximo 10 caracteres por palabra");
+                    System.out.println("Máximo 10 caracteres por palabra.");
                 } else if(palabraUsur.contains(" ")) {
-                    System.out.println("Solo una palabra cada vez, no pueden haber espacios");
-                }else{
+                    System.out.println("No pueden haber espacios.");
+                } else if (palabraUsur.length() <= 2) {
+                    System.out.println("Tienen que ser palabras de más de 2 letras.");
+                } else{
                     Palabra nuevaPalabra = new Palabra(0, 0, 0, 0, palabraUsurMayus);
                     tableroLetras.addPalabra(nuevaPalabra);
                 }

@@ -3,6 +3,9 @@ package com.company.model;
 import java.util.ArrayList;
 import java.util.Random;
 
+import static com.company.Main.ANSI_GREEN;
+import static com.company.Main.ANSI_RESET;
+
 public class TableroLetras {
     private char[][] tablero;
     private ArrayList<Palabra> palabras;
@@ -15,6 +18,10 @@ public class TableroLetras {
         this.palabrasEncontradas = 0;
     }
 
+    public ArrayList<Palabra> getPalabras() {
+        return palabras;
+    }
+
     /**
      * Añade la palabra introducida por el usuario en el Main y calcula sus indices
      * con el metodo calculoIndex de la clase Palabra
@@ -25,45 +32,43 @@ public class TableroLetras {
         palabra.calculoIndex();
     }
 
-    //Metodo provisional para visualizar la lista de palabras introducidas
-   /* public void listaPalabras(){
-        for(Palabra p : palabras){
-            System.out.println(p.toString());
-        }
-    }*/
-
+    /**
+    * Colocar aleatoriamente las palabras en el tablero
+    * Primero introducimos las letras de las palabras introducidas por el usuario
+    * Luego generamos letras aleatorias para rellenar los indices que faltan con el método generarLetras()
+    */
     public void generarTablero() {
-        // Lógica para colocar aleatoriamente las palabras en el tablero
-        // evitando superposiciones
-        //Primero generamos un tablero con letras aleatorias
-       // tablero = new char[10][10];
 
         for (int i = 0; i < palabras.size(); i++) {
-            String palabraChar = String.valueOf(palabras.get(i));
-            letrasPalabra = palabraChar.toCharArray();
-            Palabra indexPalabra = palabras.get(i);
+            String palabra = String.valueOf(palabras.get(i));
+            letrasPalabra = palabra.toCharArray();
+            Palabra palabraArrayList = palabras.get(i);//SE GUARDA CADA PALABRA DEL ARRAYLIST UNA POR UNA Y SE COLOCA EN EL TABLERO CON colocarPalabra----------------------
 
-            int indexRowInit = indexPalabra.getIndexRowInit();
-            int indexRowEnd = indexPalabra.getIndexRowEnd();
+            colocarPalabra(palabraArrayList);
+        }
+       generarLetras();
+    }
 
-            int indexColumInit = indexPalabra.getIndexColumnInit();
-            int indexColumEnd = indexPalabra.getIndexColumnEnd();
+    private void colocarPalabra(Palabra palabraArrayList) {//FALTA POR IMPLEMENTAR EL CONTROL DE SOLAPAMIENTOS-------------------------------
+        int indexRowInit = palabraArrayList.getIndexRowInit();
+        int indexRowEnd = palabraArrayList.getIndexRowEnd();
 
-            int indexChar=0;
+        int indexColumInit = palabraArrayList.getIndexColumnInit();
+        int indexColumEnd = palabraArrayList.getIndexColumnEnd();
 
-            if(indexRowInit == indexRowEnd){ //Horizontal, i ==
-                for (int c = indexColumInit; c <= indexColumEnd; c++) {
+        int indexChar = 0;
+
+        if (indexRowInit == indexRowEnd) { //Horizontal, i ==
+            for (int c = indexColumInit; c <= indexColumEnd; c++) {
                     tablero[indexRowInit][c] = letrasPalabra[indexChar];
                     indexChar++;
-                }
-            }else if (indexColumInit == indexColumEnd) { //Vertical, j ==
-                for (int r = indexRowInit; r <= indexRowEnd; r++) {
+            }
+        } else if (indexColumInit == indexColumEnd) { //Vertical, j ==
+            for (int r = indexRowInit; r <= indexRowEnd; r++) {
                     tablero[r][indexColumInit] = letrasPalabra[indexChar];
                     indexChar++;
-                }
             }
         }
-        generarLetras();
     }
 
     private void generarLetras() {
@@ -71,17 +76,14 @@ public class TableroLetras {
         for (int i = 0; i < 10; i++) {
             for (int j = 0; j < 10; j++) {
                 if (tablero[i][j] == '\u0000') {//El caracter '\u0000' es = a null en char
-                    // Generar una letra aleatoria entre 'A' (ASCII 65) y 'Z' (ASCII 90)
-                    char letra = (char) (random.nextInt(26) + 'A');
+                    char letra = (char) (random.nextInt(26) + 'A');// Generar una letra aleatoria entre 'A' (ASCII 65) y 'Z' (ASCII 90)
                     tablero[i][j] = letra;
                 }
             }
         }
     }
 
-
-    public void imprimirTablero() {
-        // Imprimir la matriz tablero por consola
+    public void imprimirTablero() {// Imprimir la matriz tablero por consola
         for (int i = 0; i < 10; i++) {
             for (int j = 0; j < 10; j++) {
                 System.out.print(tablero[i][j] + " ");
@@ -90,24 +92,45 @@ public class TableroLetras {
         }
     }
 
-    public boolean buscarPalabra(String palabra) {
-        // Buscar palabra en tablero
-        // Si encontrada, marcarla como descubierta
-        // y aumentar contador palabrasEncontradas
-        boolean encontrado = false;
+    public void imprimirTableroColor(Palabra palabra) {
+        for (int i = 0; i < 10; i++) {
+            for (int j = 0; j < 10; j++) {
 
-        for (Palabra p: palabras) {
-            if(p.toString().equalsIgnoreCase(palabra)) { //Utilizamos toString para pasar el objeto Palabra del ArrayList a String y poder compararlo
-                encontrado = true;// palabra encontrada
-                palabrasEncontradas++;
-                break;
+                /*for(Palabra p : palabras) {
+                    if (palabra.isDiscovered()) {
+                        Object letra = tablero[i][j];
+                        int[] coords = p.coordsOfMatch(letra);
+                        int row = coords[0];
+                        int col = coords[1];
+
+                        if (i == row && j == col) {
+                            System.out.print(ANSI_GREEN + tablero[i][j] + " " + ANSI_RESET);
+                        }
+                    }
+                }*/
+
+                Object letra = tablero[i][j];
+                int[] coords = palabra.coordsOfMatch(letra);
+                int row = coords[0];
+                int col = coords[1];
+
+                if (i == row && j == col) {
+                    System.out.print(ANSI_GREEN + tablero[i][j] + " " + ANSI_RESET);
+                } else {
+                    System.out.print(tablero[i][j] + " ");
+                }
             }
+            System.out.println(); // Salto de línea después de cada fila
         }
-        return encontrado;
+    }
+
+    public void sumarPalabra(Palabra palabra){
+        if(!palabra.isDiscovered()) {
+            palabrasEncontradas++;
+        }
     }
 
     public boolean finJuego() {
         return palabrasEncontradas == palabras.size();
     }
-
 }
