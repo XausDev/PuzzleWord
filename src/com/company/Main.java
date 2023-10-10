@@ -43,15 +43,18 @@ public class Main {
                     System.out.print("¡Has encontrado la palabra "
                             +ANSI_GREEN+palabraBuscar.toUpperCase()+ANSI_RESET
                             +" en la sopa de letras!\n");
-                    tableroLetras.imprimirTableroColor(palabra);//En este punto ya sabes que esta palabra ha sido encontrada, discovered = true.
+                    tableroLetras.imprimirTableroColor();//En este punto ya sabes que esta palabra ha sido encontrada, discovered = true.
                     System.out.println();//Salto de linea
                     encontrada =true;
-                    break;
+
+                    if(!tableroLetras.finJuego()){
+                        System.out.println("Introduce otra palabra:");
+                    }
                 }
             }
 
             if(!encontrada){
-                System.out.print("La palabra "
+                System.out.println("La palabra "
                         +ANSI_RED+palabraBuscar.toUpperCase()+ANSI_RESET
                         +" no está en la sopa de letras.");
                 System.out.println("Vuelve a intentarlo:\n");

@@ -92,12 +92,13 @@ public class TableroLetras {
         }
     }
 
-    public void imprimirTableroColor(Palabra palabra) {
+    public void imprimirTableroColor() {
         for (int i = 0; i < 10; i++) {
             for (int j = 0; j < 10; j++) {
 
-                /*for(Palabra p : palabras) {
-                    if (palabra.isDiscovered()) {
+                boolean pintar = false;
+                for(Palabra p : palabras) {
+                    if (p.isDiscovered()) {
                         Object letra = tablero[i][j];
                         int[] coords = p.coordsOfMatch(letra);
                         int row = coords[0];
@@ -105,18 +106,11 @@ public class TableroLetras {
 
                         if (i == row && j == col) {
                             System.out.print(ANSI_GREEN + tablero[i][j] + " " + ANSI_RESET);
+                            pintar = true;
                         }
                     }
-                }*/
-
-                Object letra = tablero[i][j];
-                int[] coords = palabra.coordsOfMatch(letra);
-                int row = coords[0];
-                int col = coords[1];
-
-                if (i == row && j == col) {
-                    System.out.print(ANSI_GREEN + tablero[i][j] + " " + ANSI_RESET);
-                } else {
+                }
+                if(!pintar){
                     System.out.print(tablero[i][j] + " ");
                 }
             }
