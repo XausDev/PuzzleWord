@@ -61,6 +61,8 @@ public class Palabra extends PuzzelItem {
 
     @Override
     public int[] coordsOfMatch(Object letra) {
+        //PROBLEMA: Este metodo revisa todas las letras en el "palabra.charAt == letra" pero solo se queda con la última si hay letras repetidas
+        //o con la primera si pongo "break"
         int row = -1;
         int col = -1;
 
@@ -69,6 +71,7 @@ public class Palabra extends PuzzelItem {
                 if(this.palabra.charAt(j) == (char)letra){
                     row = getIndexRowInit();
                     col = j+getIndexColumnInit();
+                    break;
                 }
             }
 
@@ -77,6 +80,7 @@ public class Palabra extends PuzzelItem {
                 if(this.palabra.charAt(i) == (char)letra){
                     row = i + getIndexRowInit();
                     col = getIndexColumnInit();
+                    break;
                 }
             }
         }return new int[]{row,col};

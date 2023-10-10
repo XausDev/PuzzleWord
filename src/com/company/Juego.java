@@ -48,17 +48,25 @@ public class Juego {
 
     public void pedirPalabra(String palabraUsur) {
 
+        if (tableroLetras.getPalabras().size() <= 5) {
+
             String palabraUsurMayus = palabraUsur.toUpperCase(); //Lo pasamos a mayusculas
 
-                if (palabraUsur.length() > 10) {
-                    System.out.println("Máximo 10 caracteres por palabra.");
-                } else if (palabraUsur.contains(" ")) {
-                    System.out.println("No pueden haber espacios.");
-                } else if (palabraUsur.length() <= 2) {
-                    System.out.println("Tienen que ser palabras de más de 2 letras.");
-                } else {
-                    Palabra nuevaPalabra = new Palabra(0, 0, 0, 0, palabraUsurMayus);
-                    tableroLetras.addPalabra(nuevaPalabra);
-                }
+            if (palabraUsur.length() > 10) {
+                System.out.println("Máximo 10 caracteres por palabra.");
+            } else if (palabraUsur.contains(" ")) {
+                System.out.println("No pueden haber espacios.");
+            } else if (palabraUsur.length() <= 2) {
+                System.out.println("Tienen que ser palabras de más de 2 letras.");
+            } else {
+                Palabra nuevaPalabra = new Palabra(0, 0, 0, 0, palabraUsurMayus);
+                tableroLetras.addPalabra(nuevaPalabra);
+            }
+        } else {
+            System.out.println("Has llegado al máximo de palabras. La palabra "
+                    +ANSI_RED+palabraUsur.toUpperCase()+ANSI_RESET
+                    +" no ha entrado en la Sopa de Letras.");
+            System.out.println("Escribe end y pulsa intro:");
+        }
     }
 }

@@ -23,7 +23,7 @@ public class Main {
         Scanner input = new Scanner(System.in);
         boolean salir = false;
 
-        System.out.println("Ingrese palabras:");
+        System.out.println("Ingrese palabras (seis como máximo):");
 
         do {//Pedir palabras para crear los objetos Palabra
             String palabraUsur = input.nextLine();
