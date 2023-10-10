@@ -1,6 +1,5 @@
 package com.company.model;
 
-import java.lang.management.PlatformLoggingMXBean;
 import java.util.Random;
 
 public class Palabra extends PuzzelItem {
@@ -16,23 +15,6 @@ public class Palabra extends PuzzelItem {
             this.letras[i]= palabra.charAt(i);
         }
     }
-
-    public char[] getLetras() {
-            return letras;
-    }
-
-    public void setLetras(char[] letras) {
-        this.letras = letras;
-    }
-
-    public void letrasColor(String color){
-        String letraColor = "";
-        for(char letra : letras){
-            letraColor += color + letra;
-        }
-        setLetras(letraColor.toCharArray());
-    }
-
 
     /**
      * Metodo para calcular de forma aleatoria los indices de la palabra.
@@ -97,7 +79,6 @@ public class Palabra extends PuzzelItem {
                     col = getIndexColumnInit();
                 }
             }
-
         }return new int[]{row,col};
     }
 

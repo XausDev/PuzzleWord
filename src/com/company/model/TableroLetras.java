@@ -25,18 +25,19 @@ public class TableroLetras {
     /**
      * Añade la palabra introducida por el usuario en el Main y calcula sus indices
      * con el metodo calculoIndex de la clase Palabra
+     *
      * @param palabra objeto de la clase Palabra introducido por el usuario
      */
-    public void addPalabra(Palabra palabra){
+    public void addPalabra(Palabra palabra) {
         palabras.add(palabra);
         palabra.calculoIndex();
     }
 
     /**
-    * Colocar aleatoriamente las palabras en el tablero
-    * Primero introducimos las letras de las palabras introducidas por el usuario
-    * Luego generamos letras aleatorias para rellenar los indices que faltan con el método generarLetras()
-    */
+     * Colocar aleatoriamente las palabras en el tablero
+     * Primero introducimos las letras de las palabras introducidas por el usuario
+     * Luego generamos letras aleatorias para rellenar los indices que faltan con el método generarLetras()
+     */
     public void generarTablero() {
 
         for (int i = 0; i < palabras.size(); i++) {
@@ -46,7 +47,7 @@ public class TableroLetras {
 
             colocarPalabra(palabraArrayList);
         }
-       generarLetras();
+        generarLetras();
     }
 
     private void colocarPalabra(Palabra palabraArrayList) {//FALTA POR IMPLEMENTAR EL CONTROL DE SOLAPAMIENTOS-------------------------------
@@ -60,16 +61,16 @@ public class TableroLetras {
 
         if (indexRowInit == indexRowEnd) { //Horizontal, i ==
             for (int c = indexColumInit; c <= indexColumEnd; c++) {
-                    tablero[indexRowInit][c] = letrasPalabra[indexChar];
-                    indexChar++;
+                tablero[indexRowInit][c] = letrasPalabra[indexChar];
+                indexChar++;
             }
-        } else if (indexColumInit == indexColumEnd) { //Vertical, j ==
+        } else if(indexColumInit ==indexColumEnd){ //Vertical, j ==
             for (int r = indexRowInit; r <= indexRowEnd; r++) {
-                    tablero[r][indexColumInit] = letrasPalabra[indexChar];
-                    indexChar++;
-            }
+                tablero[r][indexColumInit] = letrasPalabra[indexChar];
+                indexChar++;
         }
     }
+}
 
     private void generarLetras() {
         Random random = new Random();
