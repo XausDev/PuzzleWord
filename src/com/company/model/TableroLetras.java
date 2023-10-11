@@ -50,7 +50,7 @@ public class TableroLetras {
         generarLetras();
     }
 
-    private void colocarPalabra(Palabra palabraArrayList) {//FALTA POR IMPLEMENTAR EL CONTROL DE SOLAPAMIENTOS-------------------------------
+    private void colocarPalabra(Palabra palabraArrayList) {
         int indexRowInit = palabraArrayList.getIndexRowInit();
         int indexRowEnd = palabraArrayList.getIndexRowEnd();
 
@@ -61,16 +61,44 @@ public class TableroLetras {
 
         if (indexRowInit == indexRowEnd) { //Horizontal, i ==
             for (int c = indexColumInit; c <= indexColumEnd; c++) {
-                tablero[indexRowInit][c] = letrasPalabra[indexChar];
-                indexChar++;
+
+                if(!comprobarPosicionLetra(indexRowInit, c)){//Implementacion del CONTROL DE SOLAPAMIENTOS-------------------------------
+                    int finColum = c; //Para que se guarde la posición en que coincide con otra letra y podamos usarla en el for de borrado
+                    for (c = indexColumInit; c < finColum; c++){//Borra todas las letras anteriores de esta palabra hasta la posición en que ha coincidido con otra
+                        tablero[indexRowInit][c] = '\u0000';
+                    }
+                    palabraArrayList.calculoIndex();//Vuelve a calcular sus indices
+                    colocarPalabra(palabraArrayList);//Vuelve a colocar la palabra
+                }else {
+                    tablero[indexRowInit][c] = letrasPalabra[indexChar];
+                    indexChar++;
+                }
             }
         } else if(indexColumInit ==indexColumEnd){ //Vertical, j ==
             for (int r = indexRowInit; r <= indexRowEnd; r++) {
-                tablero[r][indexColumInit] = letrasPalabra[indexChar];
-                indexChar++;
+
+                if (!comprobarPosicionLetra(r, indexColumInit)){//Implementacion del CONTROL DE SOLAPAMIENTOS-------------------------------
+                    int finRow = r;//Para que se guarde la posición en que coincide con otra letra y podamos usarla en el for de borrado
+                    for (r = indexRowInit; r < finRow; r++){//Borra todas las letras anteriores de esta palabra hasta la posición en que ha coincidido con otra
+                        tablero[r][indexColumInit] = '\u0000';
+                    }
+                    palabraArrayList.calculoIndex();//Vuelve a calcular sus indices
+                    colocarPalabra(palabraArrayList);//Vuelve a colocar la palabra
+                }else {
+                    tablero[r][indexColumInit] = letrasPalabra[indexChar];
+                    indexChar++;
+                }
         }
     }
 }
+
+    private boolean comprobarPosicionLetra(int r, int c){
+        boolean disponiple = false;
+        if(tablero[r][c] == '\u0000'){
+            disponiple = true;
+        }
+     return disponiple;
+    }
 
     private void generarLetras() {
         Random random = new Random();
