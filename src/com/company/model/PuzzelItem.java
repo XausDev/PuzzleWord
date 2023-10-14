@@ -12,7 +12,7 @@ public abstract class PuzzelItem {
         this.indexRowEnd = indexRowEnd;
         this.indexColumnInit = indexColumnInit;
         this.indexColumneEnd = indexColumneEnd;
-        this.discovered = discovered;
+        //this.discovered = discovered;
     }
 
     public abstract int length();
