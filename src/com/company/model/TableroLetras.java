@@ -12,6 +12,8 @@ public class TableroLetras {
     private int palabrasEncontradas;
     private char[] letrasPalabra;
     private int indexLetra = 0;
+    private static final int MAX_RECURSION = 10;
+    private int recursionCount = 0;
 
 
     public TableroLetras() {
@@ -41,11 +43,35 @@ public class TableroLetras {
      */
     public void generarTablero() {
 
+        int maxLength = 0;
+        Palabra palabraLarga = null;
+
         for (Palabra palabraArrayList : palabras) {
+            if (palabraArrayList.toString().length() > maxLength) {
+                maxLength = palabraArrayList.toString().length();
+                palabraLarga = palabraArrayList;
+            }
+        }
+
+        if (palabraLarga != null) {
+            String palabra = palabraLarga.toString();
+            letrasPalabra = palabra.toCharArray();
+            colocarPalabra(palabraLarga);
+        }
+
+        for (Palabra palabraArrayList : palabras) {
+            if (!palabraArrayList.equals(palabraLarga)) {
+                String palabra = palabraArrayList.toString();
+                letrasPalabra = palabra.toCharArray();
+                colocarPalabra(palabraArrayList);
+            }
+        }
+
+          /*  for (Palabra palabraArrayList : palabras) {
             String palabra = palabraArrayList.toString();
             letrasPalabra = palabra.toCharArray();
             colocarPalabra(palabraArrayList);
-        }
+        }*/
         generarLetras();
     }
 
@@ -55,7 +81,7 @@ public class TableroLetras {
       * No he podido implementar el Control de Solapamiento. He dejado los intentos comentados al final del código.
      * @param palabraArrayList Cada una de las palabras guardadas en el ArrayList
      */
-    private void colocarPalabra(Palabra palabraArrayList) {
+    /*private void colocarPalabra(Palabra palabraArrayList) {
         int indexRowInit = palabraArrayList.getIndexRowInit();
         int indexRowEnd = palabraArrayList.getIndexRowEnd();
 
@@ -82,7 +108,78 @@ public class TableroLetras {
              }
         }
 
-}
+}*/
+    private void colocarPalabra(Palabra palabraArrayList) {
+        int indexRowInit = palabraArrayList.getIndexRowInit();
+        int indexRowEnd = palabraArrayList.getIndexRowEnd();
+
+        int indexColumInit = palabraArrayList.getIndexColumnInit();
+        int indexColumEnd = palabraArrayList.getIndexColumnEnd();
+
+        indexLetra = 0;
+
+        if (indexRowInit == indexRowEnd) { //Horizontal, i ==
+            for (int c = indexColumInit; c <= indexColumEnd; c++) {
+                //OPCION 1 ------- Se borra solo las letras de la palbra actual y se vuelve a colocar
+                if (!comprobarPosicionLetra(indexRowInit, c)) {//Implementacion del CONTROL DE SOLAPAMIENTOS-------------------------------
+                    int finColum = c; //Para que se guarde la posición en que coincide con otra letra y podamos usarla en el for de borrado
+                    for (c = indexColumInit; c < finColum; c++) {//Borra todas las letras anteriores de esta palabra hasta la posición en que ha coincidido con otra
+                        tablero[indexRowInit][c] = '\u0000';
+                    }
+                    recolocarPalabra(palabraArrayList);
+                    //palabraArrayList.calculoIndex();//Vuelve a calcular sus indices
+                    //colocarPalabra(palabraArrayList);//AQUI ESTÁ EL ERROR (RECURSION)
+                }else {
+                    tablero[indexRowInit][c] = letrasPalabra[indexLetra];
+                    if(indexLetra < letrasPalabra.length-1) {  //----El -1 para que indexLetra no provoque en el else un OutOfBounds Exception
+                        indexLetra++;
+                    }
+                }
+            }
+        } else if(indexColumInit ==indexColumEnd){ //Vertical, j ==, Palabra en ROW
+            for (int r = indexRowInit; r <= indexRowEnd; r++) {
+                //OPCION 1 ------- Se borra solo las letras de la palabra actual y se vuelve a colocar
+
+                if (!comprobarPosicionLetra(r, indexColumInit)) {//Implementacion del CONTROL DE SOLAPAMIENTOS-------------------------------
+                    int finRow = r;//Para que se guarde la posición en que coincide con otra letra y podamos usarla en el for de borrado
+                    for (r = indexRowInit; r < finRow; r++) {//Borra todas las letras anteriores de esta palabra hasta la posición en que ha coincidido con otra
+                        tablero[r][indexColumInit] = '\u0000';
+                    }
+                    recolocarPalabra(palabraArrayList);
+                    //palabraArrayList.calculoIndex();//Vuelve a calcular sus indices
+                    //colocarPalabra(palabraArrayList); //AQUI ESTÁ EL ERROR (RECURSION)
+                }else{
+                    tablero[r][indexColumInit] = letrasPalabra[indexLetra];
+                    if(indexLetra < letrasPalabra.length-1) {         //----El -1 para que indexLetra no provoque en el else un OutOfBounds Exception
+                        indexLetra++;
+                    }
+                }
+            }
+        }
+    }
+
+    public void recolocarPalabra(Palabra palabraArrayList) {
+        if (recursionCount < MAX_RECURSION) {
+            palabraArrayList.calculoIndex();//Vuelve a calcular sus indices
+            colocarPalabra(palabraArrayList); //AQUÍ ESTÁ EL ERROR (RECURSION)
+            recursionCount++;
+        } else {
+            System.out.println("No se ha podido colocar todas las palabras. Volver a empezar.");
+            limpiarTablero();
+            for (Palabra palabra : palabras) {
+                palabra.calculoIndex();
+            }
+            generarTablero();
+        }
+    }
+
+    public void limpiarTablero(){
+        for (int i = 0; i < 10; i++) {
+            for (int j = 0; j < 10; j++) {
+                tablero[i][j] = '\u0000';
+            }
+        }
+    }
 
     /**
      * Este Metodo es para el CONTROL de SOLAPAMIENTO que al final no he podido implementar.
@@ -90,7 +187,7 @@ public class TableroLetras {
      * Comprueba que la casilla donde se va a acolocar la letra esté vacia o sea la misma letra
      * @param r Indice ROW de la casilla
      * @param c Indice COLUMN de la casilla
-     * @return
+     * @return true si está disponible la casilla o si es la misma letra que la de la palabra
      */
     private boolean comprobarPosicionLetra(int r, int c){
         boolean disponiple = false;
