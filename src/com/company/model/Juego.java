@@ -1,7 +1,5 @@
-package com.company;
+package com.company.model;
 
-import com.company.model.Palabra;
-import com.company.model.TableroLetras;
 import static com.company.Main.*;
 
 public class Juego {
