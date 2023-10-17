@@ -20,6 +20,10 @@ public class TableroLetras {
         this.palabrasEncontradas = 0;
     }
 
+    public int getPalabrasEncontradas() {
+        return palabrasEncontradas;
+    }
+
     public ArrayList<Palabra> getPalabras() {
         return palabras;
     }

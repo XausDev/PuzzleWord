@@ -4,7 +4,7 @@ import static com.company.Main.*;
 
 public class Juego {
 
-    boolean encontrada = false;
+    private boolean encontrada = false;
     TableroLetras tableroLetras = new TableroLetras();
     public void tablero(){
         tableroLetras.generarTablero();
@@ -57,6 +57,8 @@ public class Juego {
                 System.out.print("¡Has encontrado la palabra "
                         +ANSI_GREEN+palabraBuscar.toUpperCase()+ANSI_RESET
                         +" en la sopa de letras!\n");
+                int palabrasRestantes = (tableroLetras.getPalabrasEncontradas()) - (tableroLetras.getPalabras().size());
+                System.out.println("Palabras por encontrar "+palabrasRestantes);
                 System.out.println();//Salto de linea
                 tableroLetras.imprimirTableroColor();      //------En este punto ya sabes que esta palabra ha sido encontrada, discovered = true.
                 System.out.println();//Salto de linea
