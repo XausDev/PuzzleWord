@@ -13,7 +13,7 @@ public class Main {
         programa.inicio();
     }
 
-    public void inicio() {//Inicio Programa--------------------------
+    public void inicio() { //Inicio Programa--------------------------
 
         Scanner input = new Scanner(System.in);
         boolean salir = false;
