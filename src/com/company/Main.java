@@ -16,7 +16,7 @@ public class Main {
 
         Scanner input = new Scanner(System.in);
         boolean salir = false;
-
+        System.out.println("********************************************");
         System.out.println("****** BIENVENIDO A LA SOPA DE LETRAS ******");
         System.out.println("*********** ESCRIBA PALABRAS ***************");
         System.out.println("Cinco palabras como máximo ------------------");
@@ -35,12 +35,13 @@ public class Main {
         System.out.println("Encuentra las palabras en la sopa de letras:\n");
 
         juego.tablero();      //--------------Se genera el tablero de la Sopa de Letras
-
+        System.out.println(juego.palabrasRestantes());
         System.out.println("Introduce una palabra:");
 
         do {              //------------------Buscar las palabras en el tablero de la Sopa de Letras
             String palabraBuscar = input.nextLine();
             juego.buscarPalabra(palabraBuscar);
+            System.out.println(juego.palabrasRestantes());
         } while (!juego.fin());
 
         System.out.println("¡Felicidades! ¡Has completado la sopa de letras!");

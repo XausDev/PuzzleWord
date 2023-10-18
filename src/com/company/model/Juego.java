@@ -11,6 +11,11 @@ public class Juego {
         tableroLetras.imprimirTablero();
     }
 
+    public String palabrasRestantes(){
+        int palabrasRestantes = (tableroLetras.getPalabras().size()-(tableroLetras.getPalabrasEncontradas()));
+        return "Hay "+palabrasRestantes+" palabras por encontrar en la Sopa de Letras.";
+    }
+
     public boolean fin(){
         return tableroLetras.finJuego();
     }
@@ -57,8 +62,6 @@ public class Juego {
                 System.out.print("¡Has encontrado la palabra "
                         +ANSI_GREEN+palabraBuscar.toUpperCase()+ANSI_RESET
                         +" en la sopa de letras!\n");
-                int palabrasRestantes = (tableroLetras.getPalabras().size()-(tableroLetras.getPalabrasEncontradas()));
-                System.out.println("Palabras por encontrar "+palabrasRestantes);
                 System.out.println();//Salto de linea
                 tableroLetras.imprimirTableroColor();      //------En este punto ya sabes que esta palabra ha sido encontrada, discovered = true.
                 System.out.println();//Salto de linea
