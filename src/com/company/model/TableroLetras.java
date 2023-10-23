@@ -12,14 +12,16 @@ public class TableroLetras {
     private int palabrasEncontradas;
     private char[] letrasPalabra;
     private int indexLetra = 0;
-    private static final int MAX_RECURSION = 10;
-    private int recursionCount = 0;
 
 
     public TableroLetras() {
         palabras = new ArrayList<>();
         this.tablero = new char[10][10];
         this.palabrasEncontradas = 0;
+    }
+
+    public int getPalabrasEncontradas() {
+        return palabrasEncontradas;
     }
 
     public ArrayList<Palabra> getPalabras() {
@@ -38,8 +40,9 @@ public class TableroLetras {
 
     /**
      * Colocar aleatoriamente las palabras en el tablero
-     * Primero introducimos las letras de las palabras introducidas por el usuario
-     * Luego generamos letras aleatorias para rellenar los indices que faltan con el método generarLetras()
+     * Primero coloca la palabra más larga, intentamos evitar solapamientos.
+     * La variable "letrasPalabra" es un array de chars para introducir las letras de las palabras introducidas por el usuario
+     * Luego generamos letras aleatorias para rellenar los índices que faltan con el método generarLetras()
      */
     public void generarTablero() {
 
@@ -66,49 +69,9 @@ public class TableroLetras {
                 colocarPalabra(palabraArrayList);
             }
         }
-
-          /*  for (Palabra palabraArrayList : palabras) {
-            String palabra = palabraArrayList.toString();
-            letrasPalabra = palabra.toCharArray();
-            colocarPalabra(palabraArrayList);
-        }*/
         generarLetras();
     }
 
-
-     /**
-     * Coloca la palabra en el tablero vacío segun sus índices.
-      * No he podido implementar el Control de Solapamiento. He dejado los intentos comentados al final del código.
-     * @param palabraArrayList Cada una de las palabras guardadas en el ArrayList
-     */
-    /*private void colocarPalabra(Palabra palabraArrayList) {
-        int indexRowInit = palabraArrayList.getIndexRowInit();
-        int indexRowEnd = palabraArrayList.getIndexRowEnd();
-
-        int indexColumInit = palabraArrayList.getIndexColumnInit();
-        int indexColumEnd = palabraArrayList.getIndexColumnEnd();
-
-        indexLetra = 0;
-
-        if (indexRowInit == indexRowEnd) { //Horizontal, i ==
-            for (int c = indexColumInit; c <= indexColumEnd; c++) {
-
-                tablero[indexRowInit][c] = letrasPalabra[indexLetra];
-                if(indexLetra < letrasPalabra.length-1) {  //----El -1 para que indexLetra no provoque en el else un OutOfBounds Exception
-                    indexLetra++;
-                }
-            }
-        } else if(indexColumInit ==indexColumEnd){ //Vertical, j ==
-            for (int r = indexRowInit; r <= indexRowEnd; r++) {
-
-                tablero[r][indexColumInit] = letrasPalabra[indexLetra];
-                if(indexLetra < letrasPalabra.length-1) {         //----El -1 para que indexLetra no provoque en el else un OutOfBounds Exception
-                    indexLetra++;
-                }
-             }
-        }
-
-}*/
     private void colocarPalabra(Palabra palabraArrayList) {
         int indexRowInit = palabraArrayList.getIndexRowInit();
         int indexRowEnd = palabraArrayList.getIndexRowEnd();
@@ -120,15 +83,15 @@ public class TableroLetras {
 
         if (indexRowInit == indexRowEnd) { //Horizontal, i ==
             for (int c = indexColumInit; c <= indexColumEnd; c++) {
+
                 //OPCION 1 ------- Se borra solo las letras de la palbra actual y se vuelve a colocar
                 if (!comprobarPosicionLetra(indexRowInit, c)) {//Implementacion del CONTROL DE SOLAPAMIENTOS-------------------------------
                     int finColum = c; //Para que se guarde la posición en que coincide con otra letra y podamos usarla en el for de borrado
                     for (c = indexColumInit; c < finColum; c++) {//Borra todas las letras anteriores de esta palabra hasta la posición en que ha coincidido con otra
                         tablero[indexRowInit][c] = '\u0000';
                     }
-                    recolocarPalabra(palabraArrayList);
-                    //palabraArrayList.calculoIndex();//Vuelve a calcular sus indices
-                    //colocarPalabra(palabraArrayList);//AQUI ESTÁ EL ERROR (RECURSION)
+                    recalcular(palabraArrayList);
+                    break;
                 }else {
                     tablero[indexRowInit][c] = letrasPalabra[indexLetra];
                     if(indexLetra < letrasPalabra.length-1) {  //----El -1 para que indexLetra no provoque en el else un OutOfBounds Exception
@@ -138,16 +101,15 @@ public class TableroLetras {
             }
         } else if(indexColumInit ==indexColumEnd){ //Vertical, j ==, Palabra en ROW
             for (int r = indexRowInit; r <= indexRowEnd; r++) {
-                //OPCION 1 ------- Se borra solo las letras de la palabra actual y se vuelve a colocar
 
+                //OPCION 1 ------- Se borra solo las letras de la palabra actual y se vuelve a colocar
                 if (!comprobarPosicionLetra(r, indexColumInit)) {//Implementacion del CONTROL DE SOLAPAMIENTOS-------------------------------
                     int finRow = r;//Para que se guarde la posición en que coincide con otra letra y podamos usarla en el for de borrado
                     for (r = indexRowInit; r < finRow; r++) {//Borra todas las letras anteriores de esta palabra hasta la posición en que ha coincidido con otra
                         tablero[r][indexColumInit] = '\u0000';
                     }
-                    recolocarPalabra(palabraArrayList);
-                    //palabraArrayList.calculoIndex();//Vuelve a calcular sus indices
-                    //colocarPalabra(palabraArrayList); //AQUI ESTÁ EL ERROR (RECURSION)
+                    recalcular(palabraArrayList);
+                    break;
                 }else{
                     tablero[r][indexColumInit] = letrasPalabra[indexLetra];
                     if(indexLetra < letrasPalabra.length-1) {         //----El -1 para que indexLetra no provoque en el else un OutOfBounds Exception
@@ -158,27 +120,9 @@ public class TableroLetras {
         }
     }
 
-    public void recolocarPalabra(Palabra palabraArrayList) {
-        if (recursionCount < MAX_RECURSION) {
-            palabraArrayList.calculoIndex();//Vuelve a calcular sus indices
-            colocarPalabra(palabraArrayList); //AQUÍ ESTÁ EL ERROR (RECURSION)
-            recursionCount++;
-        } else {
-            System.out.println("No se ha podido colocar todas las palabras. Volver a empezar.");
-            limpiarTablero();
-            for (Palabra palabra : palabras) {
-                palabra.calculoIndex();
-            }
-            generarTablero();
-        }
-    }
-
-    public void limpiarTablero(){
-        for (int i = 0; i < 10; i++) {
-            for (int j = 0; j < 10; j++) {
-                tablero[i][j] = '\u0000';
-            }
-        }
+    public void recalcular(Palabra palabraArrayList){
+        palabraArrayList.calculoIndex();//Vuelve a calcular sus indices
+        colocarPalabra(palabraArrayList);//AQUI ESTÁ EL ERROR (RECURSION)
     }
 
     /**
@@ -230,6 +174,7 @@ public class TableroLetras {
      * Por cada palabra comprueba si esta descubierta, compara la letra del tablero con la letra de la palabra con
      * el metodo coordsOfMatch. Si coincide el metodo coordsOfMatch devuelve los indices y si coindicen con la
      * casilla que estamos mirando la pinta en verde.
+     * ERROR A RESOLVER: Si una letra coincide con otra y tiene que pintar las dos, se duplican las letras.
      */
     public void imprimirTableroColor() {
 
@@ -274,81 +219,3 @@ public class TableroLetras {
         return palabrasEncontradas == palabras.size();
     }
 }
-
-
-
-// INTENTOS DE CONTROLAR LOS ERRORES DE SOLAPAMIENTO EN EL MÉTODO colocarPalabra() -------------------------
-// LAS DOS OPCIONES TIENEN ERRORES--------------------------------------
-
-    /*private void colocarPalabra(Palabra palabraArrayList) {
-        int indexRowInit = palabraArrayList.getIndexRowInit();
-        int indexRowEnd = palabraArrayList.getIndexRowEnd();
-
-        int indexColumInit = palabraArrayList.getIndexColumnInit();
-        int indexColumEnd = palabraArrayList.getIndexColumnEnd();
-
-        indexLetra = 0;
-
-        if (indexRowInit == indexRowEnd) { //Horizontal, i ==
-            for (int c = indexColumInit; c <= indexColumEnd; c++) {
-
-                //OPCION 1 ------- Se borra solo las letras de la palbra actual y se vuelve a colocar
-                if (!comprobarPosicionLetra(indexRowInit, c)) {//Implementacion del CONTROL DE SOLAPAMIENTOS-------------------------------
-                    int finColum = c; //Para que se guarde la posición en que coincide con otra letra y podamos usarla en el for de borrado
-                    for (c = indexColumInit; c < finColum; c++) {//Borra todas las letras anteriores de esta palabra hasta la posición en que ha coincidido con otra
-                        tablero[indexRowInit][c] = '\u0000';
-                    }
-                    palabraArrayList.calculoIndex();//Vuelve a calcular sus indices
-                    colocarPalabra(palabraArrayList);//AQUI ESTÁ EL ERROR (RECURSION)
-                }
-
-                //OPCION 2 -------  Borramos todo el tablero
-                /*if (!comprobarPosicionLetra(indexRowInit, c)) {//Implementacion del CONTROL DE SOLAPAMIENTOS-------------------------------
-                        for (int i = 0; i < 10; i++) {
-                            for (int j = 0; j < 10; j++) {
-                                tablero[i][j] = '\u0000';
-                            }
-                        }
-                        palabraArrayList.calculoIndex();//Vuelve a calcular sus indices
-                        generarTablero();//AQUI ESTÁ EL ERROR (RECURSION)
-                    } else {
-                        tablero[indexRowInit][c] = letrasPalabra[indexLetra];
-                        if(indexLetra < letrasPalabra.length-1) {  //----El -1 para que indexLetra no provoque en el else un OutOfBounds Exception
-                            indexLetra++;
-                    }
-
-                }
-            }
-        } else if(indexColumInit ==indexColumEnd){ //Vertical, j ==
-            for (int r = indexRowInit; r <= indexRowEnd; r++) {
-
-                //OPCION 1 ------- Se borra solo las letras de la palabra actual y se vuelve a colocar
-
-                if (!comprobarPosicionLetra(r, indexColumInit)) {//Implementacion del CONTROL DE SOLAPAMIENTOS-------------------------------
-                    int finRow = r;//Para que se guarde la posición en que coincide con otra letra y podamos usarla en el for de borrado
-                    for (r = indexRowInit; r < finRow; r++) {//Borra todas las letras anteriores de esta palabra hasta la posición en que ha coincidido con otra
-                        tablero[r][indexColumInit] = '\u0000';
-                    }
-                    palabraArrayList.calculoIndex();//Vuelve a calcular sus indices
-                    colocarPalabra(palabraArrayList); //AQUI ESTÁ EL ERROR (RECURSION)
-                }
-
-                //OPCION 2 -------  Borramos todo el tablero
-                    /*if (!comprobarPosicionLetra(r, indexColumInit)){//Implementacion del CONTROL DE SOLAPAMIENTOS-------------------------------
-                        for (int i = 0; i < 10; i++) {
-                            for (int j = 0; j < 10; j++) {
-                                tablero[i][j] = '\u0000';
-                            }
-                        }
-                        palabraArrayList.calculoIndex();//Vuelve a calcular sus indices
-                        generarTablero(); //AQUI ESTÁ EL ERROR (RECURSION)
-                    }else {
-                        tablero[r][indexColumInit] = letrasPalabra[indexLetra];
-                        if(indexLetra < letrasPalabra.length-1) {//Para que indexLetra no proboque en el else un OutOfBounds Exception
-                            indexLetra++;
-                        }
-                    }
-            }
-        }
-    }
-*/
