@@ -123,7 +123,7 @@ public class TableroLetras {
 
     public void recalcular(Palabra palabraArrayList){
         palabraArrayList.calculoIndex();//Vuelve a calcular sus indices
-        colocarPalabra(palabraArrayList);//AQUI ESTÁ EL ERROR (RECURSION)
+        colocarPalabra(palabraArrayList);
     }
 
     /**
