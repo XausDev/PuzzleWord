@@ -2,48 +2,32 @@ package com.company;
 
 import com.company.model.Palabra;
 import com.company.model.TableroLetras;
+
 import static com.company.Main.*;
 
 public class Juego {
 
-    boolean encontrada = false;
+    private boolean encontrada = false;
     TableroLetras tableroLetras = new TableroLetras();
     public void tablero(){
         tableroLetras.generarTablero();
-        tableroLetras.imprimirTablero();
+        ImprimirTablero.imprimir(tableroLetras, tableroLetras.getTablero());
+    }
+
+    public String palabrasRestantes(){
+        int palabrasRestantes = (tableroLetras.getPalabras().size()-(tableroLetras.getPalabrasEncontradas()));
+        return "Hay "+palabrasRestantes+" palabras por encontrar en la Sopa de Letras.";
     }
 
     public boolean fin(){
         return tableroLetras.finJuego();
     }
 
-    public void buscarPalabra(String palabraBuscar){
-        encontrada = false;
-        for(Palabra palabra: tableroLetras.getPalabras()){ //------Por cada palabra del ArrayList se compara con los objetos Palabra
-            if(palabra.tryGuess(palabraBuscar)){           //------Para cada objeto palabra entra en el metodo tryGuess y comprueba si existe como objeto Palabra
-                tableroLetras.sumarPalabra(palabra);       //------Suma la palabra siempre que discovered = 0
-                palabra.setDiscovered();                   //------Discovered pasa a valer 1
-                System.out.print("¡Has encontrado la palabra "
-                        +ANSI_GREEN+palabraBuscar.toUpperCase()+ANSI_RESET
-                        +" en la sopa de letras!\n");
-                System.out.println();//Salto de linea
-                tableroLetras.imprimirTableroColor();      //------En este punto ya sabes que esta palabra ha sido encontrada, discovered = true.
-                System.out.println();//Salto de linea
-                encontrada =true;
-
-                if(!tableroLetras.finJuego()){
-                    System.out.println("Introduce otra palabra:");
-                }
-            }
-        }
-        if(!encontrada){
-            System.out.println("La palabra "
-                    +ANSI_RED+palabraBuscar.toUpperCase()+ANSI_RESET
-                    +" no está en la sopa de letras.");
-            System.out.println("Vuelve a intentarlo:\n");
-        }
-    }
-
+    /**
+     * Metodo para introducir las palabras escogidas por el usuario en el tablero.
+     * Creamos los objetos palabra.
+     * @param palabraUsur palabra introducida por consola.
+     */
     public void pedirPalabra(String palabraUsur) {
 
         if (tableroLetras.getPalabras().size() <= 4) {  //----------Acepta máximo cinco palabras
@@ -65,6 +49,38 @@ public class Juego {
                     +ANSI_RED+palabraUsur.toUpperCase()+ANSI_RESET
                     +" no ha entrado en la Sopa de Letras.");
             System.out.println("Escribe end y pulsa intro:");
+        }
+    }
+
+    /**
+     * Método para buscar la palabra en el tablero.
+     * @param palabraBuscar palabra a buscar.
+     */
+    public void buscarPalabra(String palabraBuscar){
+        encontrada = false;
+        for(Palabra palabra: tableroLetras.getPalabras()){ //------Por cada palabra del ArrayList se compara con los objetos Palabra
+            if(palabra.tryGuess(palabraBuscar)){           //------Para cada objeto palabra entra en el metodo tryGuess y comprueba si existe como objeto Palabra
+                tableroLetras.sumarPalabra(palabra);       //------Suma la palabra siempre que discovered = 0
+                palabra.setDiscovered();                   //------Discovered pasa a valer 1
+                System.out.print("¡Has encontrado la palabra "
+                        +ANSI_GREEN+palabraBuscar.toUpperCase()+ANSI_RESET
+                        +" en la sopa de letras!\n");
+                System.out.println();//Salto de linea
+                ImprimirTablero.imprimirTableroColor(tableroLetras);
+                //tableroLetras.imprimirTableroColor();      //------En este punto ya sabes que esta palabra ha sido encontrada, discovered = true.
+                System.out.println();//Salto de linea
+                encontrada =true;
+
+                if(!tableroLetras.finJuego()){
+                    System.out.println("Introduce otra palabra:");
+                }
+            }
+        }
+        if(!encontrada){
+            System.out.println("La palabra "
+                    +ANSI_RED+palabraBuscar.toUpperCase()+ANSI_RESET
+                    +" no está en la sopa de letras.");
+            System.out.println("Vuelve a intentarlo:\n");
         }
     }
 }

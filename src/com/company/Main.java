@@ -1,5 +1,4 @@
 package com.company;
-import com.company.model.Juego;
 import java.util.Scanner;
 public class Main {
     public static final String ANSI_RED = "\u001B[31m";
